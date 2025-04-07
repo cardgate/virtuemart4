@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension method="upgrade" type="component" version="2.5">
+    <name>CGP</name>
+     <creationDate>August 15 2017</creationDate>
+    <copyright>Copyright (C) 2015 Card Gate Plus All rights reserved.</copyright>
+    <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
+   <author>Richard Schoots</author>
+    <authorUrl>http://cardgate.com</authorUrl>
+    <version>3.0.9</version>
+     
+   	<scriptfile>script.cgp.php</scriptfile>
+	<installfile>script.cgp.php</installfile>
+	<uninstallfile>script.cgp.php</uninstallfile>
+	
+    <administration>
+    	<!-- Administration Menu Section -->
+    	<!-- Administration Main File Copy Section -->
+        <files folder="admin">
+            	<filename>admin.cgp.php</filename>
+		<folder>plugins</folder>
+		<folder>components</folder>
+		<folder>images</folder>
+		<folder>languageBE</folder>
+        </files>
+    </administration>
+</extension>

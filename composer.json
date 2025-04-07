@@ -1,0 +1,16 @@
+{
+  "name": "cardgate/virtuemart3",
+  "type": "library",
+  "description": "CardGate payment processing module for Virtuemart 3",
+  "keywords": [
+    "virtuemart",
+    "payment",
+    "cardgate",
+    "payment"
+  ],
+  "homepage": "https://www.cardgate.com",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": { "Cardgate\\virtuemart3\\" : "" }
+  }
+}

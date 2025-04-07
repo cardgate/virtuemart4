@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<extension version="2.5" type="plugin" group="vmpayment">
+    <name>CardGatePlus Banktransfer</name>
+    <creationDate>August 15 2017</creationDate>
+    <author>Richard Schoots</author>
+    <authorUrl>http://www.cardgate.com/</authorUrl>
+    <copyright>Copyright (c) 2015 Card Gate Plus B.V. All rights reserved.</copyright>
+    <license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
+    <version>4.0.4</version>
+    <description><![CDATA[<a href="http://www.cardgate.com/" target="_blank">Card Gate Plus</a> is providing various payment solutions for the internet market ]]></description>
+    <files>
+        <filename plugin="cgpbanktransfer">cgpbanktransfer.php</filename>
+    </files>
+    <languages>
+        <language tag="nl-NL">nl-NL.plg_vmpayment_cgpbanktransfer.ini</language>
+        <language tag="en-GB">en-GB.plg_vmpayment_cgpbanktransfer.ini</language>
+    </languages>
+    <vmconfig>
+        <fields name="params">
+            <fieldset name="basic" addfieldpath="/administrator/components/com_virtuemart/fields">  
+                <field type="vmtitle" default="VMPAYMENT_CGPBANKTRANSFER_CARDGATE_SETTINGS_SECTION"/>
+
+                <field type="list" name="test_mode" label="VMPAYMENT_CGPBANKTRANSFER_TEST_MODE" default="live" description="VMPAYMENT_CGPBANKTRANSFER_TEST_MODE_DESC">
+                    <option value="test">VMPAYMENT_CGPBANKTRANSFER_TEST_MODE_OPT_TEST</option>
+                    <option value="live">VMPAYMENT_CGPBANKTRANSFER_TEST_MODE_OPT_LIVE</option>
+                </field>
+                <field type="text" name="site_id" label="VMPAYMENT_CGPBANKTRANSFER_SITE_ID" description="VMPAYMENT_CGPBANKTRANSFER_SITE_ID_DESC" />
+                <field type="text" name="hash_key" label="VMPAYMENT_CGPBANKTRANSFER_HASH_KEY" description="VMPAYMENT_CGPBANKTRANSFER_HASH_KEY_DESC"  />
+                <field type="text" name="merchant_id" label="VMPAYMENT_CGPBANKTRANSFER_MERCHANT_ID" description="VMPAYMENT_CGPBANKTRANSFER_MERCHANT_ID_DESC" />
+                <field type="password" name="api_key" label="VMPAYMENT_CGPBANKTRANSFER_API_KEY" description="VMPAYMENT_CGPBANKTRANSFER_API_KEY_DESC" />
+                <field type="list" name="gateway_language" default="nl" label="VMPAYMENT_CGPBANKTRANSFER_GATEWAY_LANGUAGE" description="VMPAYMENT_CGPBANKTRANSFER_GATEWAY_LANGUAGE_DESC">
+                    <option value="nl">VMPAYMENT_CGPBANKTRANSFER_GATEWAY_LANGUAGE_OPT_DUTCH</option>
+                    <option value="en">VMPAYMENT_CGPBANKTRANSFER_GATEWAY_LANGUAGE_OPT_ENGLISH</option>
+                    <option value="de">VMPAYMENT_CGPBANKTRANSFER_GATEWAY_LANGUAGE_OPT_GERMAN</option>
+                    <option value="fr">VMPAYMENT_CGPBANKTRANSFER_GATEWAY_LANGUAGE_OPT_FRENCH</option>
+                    <option value="es">VMPAYMENT_CGPBANKTRANSFER_GATEWAY_LANGUAGE_OPT_SPANISH</option>
+                    <option value="gr">VMPAYMENT_CGPBANKTRANSFER_GATEWAY_LANGUAGE_OPT_GREEK</option>
+                    <option value="hr">VMPAYMENT_CGPBANKTRANSFER_GATEWAY_LANGUAGE_OPT_CROATIAN</option>
+                    <option value="it">VMPAYMENT_CGPBANKTRANSFER_GATEWAY_LANGUAGE_OPT_ITALIAN</option>
+                    <option value="cz">VMPAYMENT_CGPBANKTRANSFER_GATEWAY_LANGUAGE_OPT_CZECH</option>
+                    <option value="ru">VMPAYMENT_CGPBANKTRANSFER_GATEWAY_LANGUAGE_OPT_RUSSIAN</option>
+                    <option value="se">VMPAYMENT_CGPBANKTRANSFER_GATEWAY_LANGUAGE_OPT_SWEDISH</option>
+                </field>
+                
+                <field type="vmtitle" default="VMPAYMENT_CGPBANKTRANSFER_CARDGATE_ORDER STATUS_SECTION"
+                       description=""/>
+                <field name="status_pending" type="vmorderstate" scope="com_virtuemart" default="P"
+                       label="VMPAYMENT_CGPBANKTRANSFER_STATUS_PENDING" description="VMPAYMENT_CGPBANKTRANSFER_STATUS_PENDING_DESC"/>
+                <field name="status_success" type="vmorderstate" scope="com_virtuemart" default="C"
+                       label="VMPAYMENT_CGPBANKTRANSFER_STATUS_SUCCESS" description="VMPAYMENT_CGPBANKTRANSFER_STATUS_SUCCESS_DESC"/>
+                <field name="status_canceled" type="vmorderstate" scope="com_virtuemart" default="X"
+                       label="VMPAYMENT_CGPBANKTRANSFER_STATUS_FAILED" description="VMPAYMENT_CGPBANKTRANSFER_STATUS_FAILED_DESC"/>
+
+                <field type="vmtitle" default="VMPAYMENT_CGPBANKTRANSFER_CURRENCIES_SECTION" />
+
+                <field name="payment_currency" type="vmacceptedcurrency" default="" label="VMPAYMENT_CGPBANKTRANSFER_CURRENCY"
+                       description="VMPAYMENT_CGPBANKTRANSFER_CURRENCY_DESC"/>
+                
+                <field type="vmtitle" default="VMPAYMENT_CGPBANKTRANSFER_TEMPLATE_SECTION" description=""/>
+                <field name="payment_logos" type="imagelist" label="VMPAYMENT_CGPBANKTRANSFER_LOGOS" multiple="true"
+                       description="VMPAYMENT_CGPBANKTRANSFER_LOGOS_DESC"
+                       directory="/images/stories/virtuemart/payment"
+                       default="" hide_default="1" hide_none="1"
+                       stripext="0" exclude="^_"/>
+                
+                <field  type="vmtitle" default="VMPAYMENT_CGPBANKTRANSFER_RESTRICTIONS_SECTION"
+                        description=""/>
+                <field name="countries" multiple="true" type="vmcountries" scope="com_virtuemart" default=""
+                       label="VMPAYMENT_CGPBANKTRANSFER_COUNTRIES" description="VMPAYMENT_CGPBANKTRANSFER_COUNTRIES_DESC"/>
+                <field name="min_amount" type="text" label="VMPAYMENT_CGPBANKTRANSFER_MIN_AMOUNT"
+                       description="VMPAYMENT_CGPBANKTRANSFER_MIN_AMOUNT_DESC"/>
+                <field name="max_amount" type="text" label="VMPAYMENT_CGPBANKTRANSFER_MAX_AMOUNT"
+                       description="VMPAYMENT_CGPBANKTRANSFER_MAX_AMOUNT_DESC"/>
+
+                <field  type="vmtitle" default="VMPAYMENT_CGPBANKTRANSFER_DISCOUNT_FEE_SECTION"
+                        description=""/>
+                <field name="cost_per_transaction" type="text" label="VMPAYMENT_CGPBANKTRANSFER_COST_PER_TRANSACTION"
+                       description="VMPAYMENT_CGPBANKTRANSFER_COST_PER_TRANSACTION_DESC"/>
+                <field name="cost_percent_total" type="text" label="VMPAYMENT_CGPBANKTRANSFER_COST_PERCENT_TOTAL"
+                       description="VMPAYMENT_CGPBANKTRANSFER_COST_PERCENT_TOTAL_DESC"/>
+                <field name="tax_id" type="vmtaxes" scope="com_virtuemart" label="VMPAYMENT_CGPBANKTRANSFER_TAX"
+                       description="VMPAYMENT_CGPBANKTRANSFER_TAX_DESC"/>
+
+                <field  type="vmtitle" default="VMPAYMENT_CGPBANKTRANSFER_DEBUG"
+                         description=""/>
+                <field name="debug" type="list" default="0" label="VMPAYMENT_CGPBANKTRANSFER_DEBUG" >
+                    <option value="0">COM_VIRTUEMART_NO</option>
+                    <option value="1">COM_VIRTUEMART_YES</option>
+                </field>
+                <field name="log" type="list" default="0" label="VMPAYMENT_CGPBANKTRANSFER_LOG"
+                       description="VMPAYMENT_CGPBANKTRANSFER_LOG_DESC">
+                    <option value="0">COM_VIRTUEMART_NO</option>
+                    <option value="1">COM_VIRTUEMART_YES</option>
+                </field>                
+            </fieldset>
+        </fields>
+    </vmconfig>
+</extension>
