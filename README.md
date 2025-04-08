@@ -2,7 +2,6 @@
 
 # CardGate module for VirtueMart 4.x
 
-[![Build Status](https://travis-ci.org/cardgate/virtuemart3.svg?branch=master)](https://travis-ci.org/cardgate/virtuemart3)
 
 ## Support
 
@@ -14,7 +13,7 @@ The usage of this module requires that you have obtained CardGate credentials.
 Please visit [**My CardGate**](https://my.cardgate.com/) and retrieve your Site ID and Hash key, or contact your accountmanager.
 
 ## Installation
-1. Download the most recent [**cardgate.zip**](https://github.com/cardgate/virtuemart3/releases) file to your desktop.
+1. Download the most recent [**cardgate.zip**](https://github.com/cardgate/virtuemart4/releases) file to your desktop.
 
 2. Go to the **admin** section of your webshop and select **Extension manager** from the **Extensions** menu.
 

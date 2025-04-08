@@ -2,8 +2,6 @@
 
 # CardGate Modul für VirtueMart 4.x
 
-[![Build Status](https://travis-ci.org/cardgate/virtuemart3.svg?branch=master)](https://travis-ci.org/cardgate/virtuemart3)
-
 ## Support
 
 Dieses Modul is geeignet für VirtueMart version **4.x** mit den Joomla Versionen **5.x**
@@ -15,7 +13,7 @@ Gehen Sie zu [**Mein CardGate**](https://my.cardgate.com/) und fragen Sie Ihre *
 
 ## Installation
 
-1. Downloaden Sie den aktuellsten [**cardgate.zip**](https://github.com/cardgate/virtuemart3/releases) Datei auf Ihrem Desktop.
+1. Downloaden Sie den aktuellsten [**cardgate.zip**](https://github.com/cardgate/virtuemart4/releases) Datei auf Ihrem Desktop.
 
 2. Gehen Sie zum **Adminbereich** Ihres Webshops und wählen Sie **Extensionmanager** aus **Extensions** aus.
  

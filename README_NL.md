@@ -16,7 +16,7 @@ of neem contact op met je accountmanager.
 
 ## Installatie
 
-1. Download het meest recente [**cardgate.zip**](https://github.com/cardgate/virtuemart3/releases/) bestand op je bureaublad.
+1. Download het meest recente [**cardgate.zip**](https://github.com/cardgate/virtuemart4/releases/) bestand op je bureaublad.
 
 2. Ga naar het **admin** gedeelte van je webshop en selecteer **Extensiebeheer** uit het **Extensies** menu.
 
