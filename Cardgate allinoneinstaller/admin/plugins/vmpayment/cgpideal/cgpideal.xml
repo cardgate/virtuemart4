@@ -6,7 +6,7 @@
     <authorUrl>http://www.cardgate.com/</authorUrl>
     <copyright>Copyright (c) 2015 Card Gate Plus B.V. All rights reserved.</copyright>
     <license>http://www.gnu.org/licenses/gpl-3.0.html GNU/GPL</license>
-    <version>4.0.4</version>
+    <version>4.0.5</version>
     <description><![CDATA[<a href="http://www.cardgate.com/" target="_blank">Card Gate Plus</a> is providing various payment solutions for the internet market ]]></description>
     <files>
         <filename plugin="cgpideal">cgpideal.php</filename>
@@ -62,13 +62,6 @@
                        directory="/images/stories/virtuemart/payment"
                        default="" hide_default="1" hide_none="1"
                        stripext="0" exclude="^_"/>
-
-                <field name="issuers_show" type="list" default="0" label="VMPAYMENT_CGPIDEAL_SHOW_ISSUERS"
-                       description="VMPAYMENT_CGPIDEAL_SHOW_ISSUERS_DESC">
-                    <option value="0">COM_VIRTUEMART_NO</option>
-                    <option value="1">COM_VIRTUEMART_YES</option>
-                </field>
-                
                 <field  type="vmtitle" default="VMPAYMENT_CGPIDEAL_RESTRICTIONS_SECTION"
                         description=""/>
                 <field name="countries" multiple="true" type="vmcountries" scope="com_virtuemart" default=""
