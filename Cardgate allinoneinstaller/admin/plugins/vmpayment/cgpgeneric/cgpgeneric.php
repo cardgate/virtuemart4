@@ -47,7 +47,7 @@ class plgVMPaymentCgpgeneric extends vmPSPlugin {
      *
      * @var mixed
      */
-    protected $_plugin_version = "4.0.4";
+    protected $_plugin_version = "4.0.5";
     protected $_url = '';
     protected $_merchant_id = '';
     protected $_api_key= '';
@@ -147,10 +147,6 @@ class plgVMPaymentCgpgeneric extends vmPSPlugin {
                 'int'
             )
         );
-        if ( $this->_name == 'cgpideal' ) {
-            $varsToPush['issuers_show'] = array(0,'int');
-            $varsToPush['issuer_refresh'] = array(0,'int');
-        }
         $this->setConfigParameterable( $this->_configTableFieldName, $varsToPush );
     }
 
@@ -437,12 +433,7 @@ class plgVMPaymentCgpgeneric extends vmPSPlugin {
         // Configure payment option.
         $oTransaction->setPaymentMethod( $method_name);
 
-        if ( $method_name == 'ideal' && $method->issuers_show == '1') {
-            $oTransaction->setIssuer( $_POST['cgp_ideal_issuer']);
-        }
-
         // Configure customer.
-
         $oConsumer = $oTransaction->getConsumer();
         if ( $address->email != '' ) {
             $oConsumer->setEmail( $address->email );
@@ -514,26 +505,25 @@ class plgVMPaymentCgpgeneric extends vmPSPlugin {
 
         $sActionUrl = $oTransaction->getActionUrl();
 
+        $app = JFactory::getApplication();
         if ( null !== $sActionUrl ) {
-            $html = '<form action="' . $sActionUrl . '" method="post" name="vm_cgp_form" >';
-            $html .= '</form>';
-            $html .= '<script type="text/javascript">';
-            $html .= '    document.vm_cgp_form.submit();';
-            $html .= '</script>';
-            $cart->_confirmDone = FALSE;
-            $cart->_dataValidated = FALSE;
+            $oModelOrder = VmModel::getModel('orders');
+            $order['customer_notified'] = 1;
+            $order['comments'] = '';
+            // Updating the order status
+            $oModelOrder->updateStatusForOneOrder($order['details']['BT']->virtuemart_order_id, $order, true);
+            $cart->_confirmDone     = FALSE;
+            $cart->_dataValidated   = FALSE;
             $cart->setCartIntoSession ();
-           // vRequest::setVar ('html', $html);
-            // 2 = don't delete the cart, don't send email and don't redirect
-            return $this->processConfirmedOrderPaymentResponse(2, $cart, $order, $html, $new_status);
+            $app->redirect($sActionUrl, 301);
+            $app->close();
+            exit();
         } else {
             $sErrorMessage = 'CardGate error: ' .'no redirect URL';
             vmInfo(JText::_($sErrorMessage));
             return false;
-
         }
-
-        return $this->processConfirmedOrderPaymentResponse(2, $cart, $order, $html, $new_status);
+        exit();
     }
 
     /**
@@ -1129,24 +1119,6 @@ class plgVMPaymentCgpgeneric extends vmPSPlugin {
             }
             return true;
         }
-
-        if ( $this->_plugin_name == 'Cgpideal' && $this->methods[0]->issuers_show == '1' ) {
-            $html .= '<br />
-                <span class="vmpayment_cardinfo">' . '
-		            <table border="0" cellspacing="0" cellpadding="2" width="100%">
-		                <tr valign="top">
-		                    <td nowrap width="10%" align="right">
-		        	            <label for="cgp_ideal_issuer">' . JText::_('VMPAYMENT_' . strtoupper($this->_plugin_name) . '_IDEAL_SELECT_BANK_LABEL') . '</label>
-		                    </td>
-		                    <td>' .
-                     $this->getCgBankHtml($this->methods[0]->virtuemart_paymentmethod_id) .'
-		                    </td>
-		                </tr>
-		            </table>
-		        </span>';
-            $htmla[] = $html;
-            $htmlIn[] = $htmla;
-        }
         return $this->displayListFE($cart, $selected, $htmlIn);
     }
 
@@ -1250,122 +1222,12 @@ class plgVMPaymentCgpgeneric extends vmPSPlugin {
         return $this->setOnTablePluginParams($name, $id, $table);
     }
 
-    private function getBankOptions($iPaymentmethodId) {
-        $this->checkBankOptions($iPaymentmethodId);
-        return $this->getIdealParam($iPaymentmethodId,'issuers');
-    }
-
-    protected function checkBankOptions($iPaymentmethodId) {
-        $iIssuerRefresh = $this->getIdealParam($iPaymentmethodId,'issuer_refresh');
-        if ($iIssuerRefresh < time()) {
-            $this->cacheBankOptions($iPaymentmethodId);
-        }
-    }
-
-    protected function cacheBankOptions($iPaymentmethodId) {
-
-        $db = JFactory::getDBO();
-        $query = 'SELECT #__virtuemart_paymentmethods .`payment_params` FROM #__virtuemart_paymentmethods' . " WHERE  `virtuemart_paymentmethod_id`= '" . $iPaymentmethodId . "'";
-        $db->setQuery($query);
-        $sPaymentParams = $db->loadResult();
-        if (! $sPaymentParams) {
-            return null;
-        }
-        $aPaymentParams = explode('|', $sPaymentParams);
-        $aParams = [];
-        foreach ($aPaymentParams as $param) {
-            $aParam = [];
-            $aParam = explode('=',$param);
-            $aParams[$aParam[0]] = trim($aParam[1],'"');
-        }
-        $bTestmode = ($aParams['test_mode'] == 'test' ? true : false);
-        $oCardGate = new cardgate\api\Client( (int) $aParams['merchant_id'], $aParams['api_key'], $bTestmode);
-        $oCardGate->setIp( $_SERVER['REMOTE_ADDR'] );
-        $aIssuers = $oCardGate->methods()
-                              ->get( cardgate\api\Method::IDEAL )
-                              ->getIssuers();
-        $aBanks = [];
-        foreach ($aIssuers as $code=>$bank){
-            $aBanks[$bank['id']] = $bank['name'];
-        }
-
-        foreach ($aPaymentParams as $key => $value) {
-            if (! (strpos($value, 'issuer_refresh="') === false)) {
-                unset($aPaymentParams[$key]);
-            }
-            if (! (strpos($value, 'issuers="') === false)) {
-                unset($aPaymentParams[$key]);
-            }
-        }
-
-        $iCacheTime = 24 * 60 * 60;
-        $iIssuerRefresh = time() + $iCacheTime;
-
-        $aPaymentParams[] = "issuer_refresh=\"" . $iIssuerRefresh . '"';
-        $aPaymentParams[] = "issuers=\"" . base64_encode(serialize($aBanks));
-
-        if ($aBanks != false && array_key_exists("INGBNL2A", $aBanks)){
-            $sPaymentParams = implode( '|', $aPaymentParams );
-            $query          = 'UPDATE #__virtuemart_paymentmethods  SET `payment_params`= \'' . $sPaymentParams . '\' WHERE `virtuemart_paymentmethod_id`= ' . $iPaymentmethodId;
-            $db->setQuery( $query );
-            $db->execute();
-        }
-    }
-
-    private function makeBankOptions($aBanks) {
-        $html = '<option value="0" >'. JText::_('VMPAYMENT_' . strtoupper($this->_plugin_name) . '_IDEAL_SELECT_BANK_DEFAULT').'</option>';
-        foreach ($aBanks as $idBank => $bankName) {
-            $html .= '<option value="' . $idBank . '">' . $bankName . '</option>';
-        }
-        return $html;
-    }
-
     private function set_url($test) {
         if ($test) {
             $this->_url = 'https://secure-staging.curopayments.net/gateway/cardgate/';
         } else {
             $this->_url = 'https://secure.curopayments.net/gateway/cardgate/';
         }
-    }
-
-    private function getIdealParam($iPaymentmethodId,$param) {
-        $search = $param . '="';
-        $method = $this->getVmPluginMethod($iPaymentmethodId);
-        if ($method->payment_element != 'cgpideal') {
-            return false;
-        }
-
-        $aPaymentParams = explode('|', $method->payment_params);
-
-        foreach ($aPaymentParams as $key => $value) {
-            if (! (strpos($value, $search) === false)) {
-                $output = $value;
-            }
-        }
-
-        switch ($param) {
-            case 'issuer_refresh':
-                $output = (int) substr($output, 16, 10);
-                break;
-            case 'issuers':
-                $output = substr($output, 9);
-                $output = unserialize(base64_decode($output));
-                break;
-            case 'test_mode':
-                $output = substr($output, 11, 4);
-                $output = ($output == 'test' ? true : false);
-                break;
-        }
-        return $output;
-    }
-
-    private function getCgBankHtml($iPaymentmethodId){
-        $html = '';
-        $html .= '<select id="cgp_ideal_issuer" name="cgp_ideal_issuer"">';
-        $aBanks = $this->getBankOptions($iPaymentmethodId);
-        $html .= $this->makeBankOptions($aBanks);
-        $html .="</select>";
-        return $html;
     }
 
     static function getPaymentCurrency (&$method, $selectedUserCurrency = false) {
@@ -1458,22 +1320,6 @@ class plgVMPaymentCgpgeneric extends vmPSPlugin {
         $html = '<input type="radio" '.$dynUpdate.' name="' . $pluginmethod_id . '" id="' . $this->_psType . '_id_' . $plugin->$pluginmethod_id . '"   value="' . $plugin->$pluginmethod_id . '" ' . $checked . ">\n"
                 . '<label for="' . $this->_psType . '_id_' . $plugin->$pluginmethod_id . '">' . '<span class="' . $this->_type . '">' . $plugin->$pluginName . $costDisplay . "</span></label>\n";
 
-        if ( $plugin->payment_element == 'cgpideal' && $plugin->issuers_show == '1' ) {
-            $html .= $this->getCgBankHtml( $plugin->virtuemart_paymentmethod_id );
-        }
         return $html;
     }
-
-    public function clearIssuers(&$data){
-        $params = explode ('|',$data->payment_params);
-        foreach ($params as $index => $string) {
-            if (strpos($string, 'issuer_refresh') !== FALSE)
-                $params[$index] = '"issuer_refresh=0"';
-        }
-        $paramString = implode('|', $params);
-        $data->payment_params = $paramString;
-        return $data;
-
-    }
-
 }
