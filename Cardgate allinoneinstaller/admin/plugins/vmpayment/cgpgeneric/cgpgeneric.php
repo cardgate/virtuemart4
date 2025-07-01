@@ -47,7 +47,7 @@ class plgVMPaymentCgpgeneric extends vmPSPlugin {
      *
      * @var mixed
      */
-    protected $_plugin_version = "4.0.5";
+    protected $_plugin_version = "4.0.6";
     protected $_url = '';
     protected $_merchant_id = '';
     protected $_api_key= '';
@@ -986,6 +986,30 @@ class plgVMPaymentCgpgeneric extends vmPSPlugin {
     }
 
     /**
+     * @param $currency
+     * @param $payment_method
+     *
+     * @return bool
+     */
+    private function checkPaymentCurrency($currency,$payment_method) {
+        $strictly_euro = in_array($payment_method,['cardgateideal',
+            'cardgateidealqr',
+            'cardgatebancontact',
+            'cardgatebanktransfer',
+            'cardgatebillink',
+            'cardgatesofortbanking',
+            'cardgatedirectdebit',
+            'cardgateonlineueberweisen',
+            'cardgatespraypay']);
+        if ($strictly_euro && $currency != 'EUR') return false;
+
+        $strictly_pln = in_array($payment_method,['cardgateprzelewy24']);
+        if ($strictly_pln && $currency != 'PLN') return false;
+
+        return true;
+    }
+
+    /**
      * Check if the payment conditions are fulfilled for this payment method
      *
      * @param type $cart
@@ -994,9 +1018,13 @@ class plgVMPaymentCgpgeneric extends vmPSPlugin {
      * @return boolean true if the conditions are fulfilled, false otherwise
      */
     protected function checkConditions($cart, $method, $cart_prices) {
-        $address = (($cart->ST == 0) ? $cart->BT : $cart->ST);
-        $amount = $cart_prices['salesPrice'];
-        $amount_cond = ($amount >= $method->min_amount and $amount <= $method->max_amount or ($method->min_amount <= $amount and ($method->max_amount == 0)));
+        $address        = (($cart->ST == 0) ? $cart->BT : $cart->ST);
+        $amount         = $cart_prices['salesPrice'];
+        $amount_cond    = ($amount >= $method->min_amount and $amount <= $method->max_amount or ($method->min_amount <= $amount and ($method->max_amount == 0)));
+
+        $payment_method = 'cardgate'.substr($this->_name, 3);
+        $currency       = shopFunctions::getCurrencyByID($cart->pricesCurrency, 'currency_code_3');
+        $currency_cond  = $this->checkPaymentCurrency($currency, $payment_method);
 
         $countries = array();
         if (! empty($method->countries)) {
@@ -1017,7 +1045,7 @@ class plgVMPaymentCgpgeneric extends vmPSPlugin {
         }
 
         if (in_array($address['virtuemart_country_id'], $countries) || count($countries) == 0) {
-            if ($amount_cond) {
+            if ($amount_cond && $currency_cond) {
                 return true;
             }
         }
