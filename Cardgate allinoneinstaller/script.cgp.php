@@ -118,6 +118,7 @@ if (!defined ('_CGP_SCRIPT_INCLUDED')) {
 			$this->installPlugin ('CardGatePlus Bitcoin', 'plugin', 'cgpbitcoin', 'vmpayment');
 			$this->installPlugin ('CardGatePlus Billink', 'plugin', 'cgpbillink', 'vmpayment');
 			$this->installPlugin ('CardGatePlus SprayPay', 'plugin', 'cgpspraypay', 'vmpayment');
+            $this->installPlugin ('CardGatePlus Crypto', 'plugin', 'cgpcrypto', 'vmpayment');
 
             $task = vRequest::getCmd ('task');
 			

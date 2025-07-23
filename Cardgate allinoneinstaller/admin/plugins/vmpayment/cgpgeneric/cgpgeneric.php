@@ -47,7 +47,7 @@ class plgVMPaymentCgpgeneric extends vmPSPlugin {
      *
      * @var mixed
      */
-    protected $_plugin_version = "4.0.6";
+    protected $_plugin_version = "4.0.7";
     protected $_url = '';
     protected $_merchant_id = '';
     protected $_api_key= '';
