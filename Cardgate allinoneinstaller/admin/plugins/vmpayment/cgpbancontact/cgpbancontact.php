@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * @category    VMPayment
- * @package     cgpmistercash
+ * @package     cgpbancontact
  * @author      CardGate B.V., <info@cardgate.com>
  * @copyright   Copyright (c) 2022 CardGate B.V. - All rights reserved.
  * @license     http://www.gnu.org/copyleft/gpl.html GNU/GPL
@@ -29,8 +29,8 @@ if (!class_exists('plgVMPaymentCgpgeneric')) {
     require(JPATH_PLUGINS . DS . 'vmpayment' . DS . 'cgpgeneric' . DS . 'cgpgeneric.php');
 }
 
-class plgVMPaymentCgpmistercash extends plgVMPaymentCgpgeneric {
+class plgVMPaymentCgpbancontact extends plgVMPaymentCgpgeneric {
     
-    protected $_plugin_name = "Cgpmistercash";
+    protected $_plugin_name = "Cgpbancontact";
     
 }
